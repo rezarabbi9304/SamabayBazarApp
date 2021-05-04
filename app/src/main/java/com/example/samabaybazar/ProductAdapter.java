@@ -65,6 +65,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         holder.btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 ProductListModel product;
                 product = db.productDao().getAnim(productListModelList.get(position).getId());
                 isUpdate = true;
@@ -81,6 +82,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
             }
         });
     }
+
 
     public void SaveData(ProductListModel model){
         Toast.makeText(mContext, "Product added to cart",Toast.LENGTH_LONG).show();

@@ -15,6 +15,7 @@ import com.google.gson.internal.$Gson$Preconditions;
 
 import org.w3c.dom.Text;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private TextView textView;
+
     private ProductApi productApi;
 
     private List<ProductListModel> productListModelList;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         getProduct();
 
+
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,9 +76,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
        }
 
     private void getProduct() {
+
 
         Call<ProductResponse> call = productApi.getProduct();
 
@@ -98,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void PutDataIntoAdapter(List<ProductListModel> productListModelList) {
+
         adapter = new ProductAdapter(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter.setProductListModelList(productListModelList);
