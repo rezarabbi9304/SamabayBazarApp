@@ -118,7 +118,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                 productCount-=1;
                 product.setProductCount(productCount);
 
-
                 SaveData(product);
 
 

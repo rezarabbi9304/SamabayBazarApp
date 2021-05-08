@@ -135,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements OnItemClick  {
     protected void onResume() {
         super.onResume();
 
+        getProduct();
+
         List<ProductListModel> cartProducts = db.productDao().getAllAnim();
 
         int totalPrice = 0;

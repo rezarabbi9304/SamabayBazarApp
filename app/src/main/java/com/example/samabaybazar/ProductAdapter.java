@@ -67,6 +67,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
                 .load(productListModelList.get(position).getImage())
                 .into(holder.setImage);
 
+        ProductListModel p;
+        p = db.productDao().getAnim(productListModelList.get(position).getId());
+        if (p != null){
+            productListModelList.get(position).setProductCount(p.getProductCount());
+            holder.setTxtCounter.setText(""+p.getProductCount());
+            holder.totalAmount.setText(""+(p.getProductCount() * Integer.parseInt(p.getPrice()) ));
+        }
+
+
         if (productListModelList.get(position).productCount > 0){
             holder.counterView.setVisibility(View.VISIBLE);
             holder.btnAddToCart.setVisibility(View.GONE);
@@ -136,9 +145,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
                 }
                 int productCount = product.getProductCount();
 
-                if (productCount == 0){
+                if (productCount == 1){
                     holder.counterView.setVisibility(View.GONE);
                     holder.btnAddToCart.setVisibility(View.VISIBLE);
+                    db.productDao().deleteProduct(product);
+                    productCount-=1;
+                    product.setProductCount(productCount);
                 }else{
                     productCount-=1;
                     product.setProductCount(productCount);
