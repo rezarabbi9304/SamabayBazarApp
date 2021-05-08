@@ -16,15 +16,20 @@ public class CartActivity extends AppCompatActivity implements OnItemClick {
 
     private RecyclerView recyclerView;
     private CartAdapter adapter;
-    TextView price;
+    TextView price,subtotal,shippingCost,GrandTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_activiaty);
 
-        recyclerView = findViewById(R.id.recyclerViewCart);
-        price = findViewById(R.id.textView);
+        recyclerView = findViewById(R.id.recyclerCartView);
+        subtotal = findViewById(R.id.setSubTotal);
+        shippingCost= findViewById(R.id.setShippingCost);
+        GrandTotal= findViewById(R.id.setGrandtotal);
+
+
+
 
         AppDataBase db = AppDataBase.getINSTANCE(this);
         List<ProductListModel> cartProducts = db.productDao().getAllAnim();
@@ -34,9 +39,16 @@ public class CartActivity extends AppCompatActivity implements OnItemClick {
         for (ProductListModel product : cartProducts){
             totalPrice = totalPrice + (Integer.parseInt(product.getPrice()) * product.getProductCount());
         }
-        price.setText(totalPrice +"");
+        setPrice(totalPrice);
 
     }
+
+    private void setPrice(int totalPrice) {
+        subtotal.setText(totalPrice+"");
+        shippingCost.setText("20");
+        GrandTotal.setText(""+(totalPrice + 20));
+    }
+
 
     private void PutDataIntoAdapter(List<ProductListModel> productListModelList) {
 
@@ -47,14 +59,16 @@ public class CartActivity extends AppCompatActivity implements OnItemClick {
 
     }
 
+    //2nd logic
     @Override
     public void onClick(String value, Boolean add) {
+        String p = subtotal.getText().toString();
         if (add){
-            String p = price.getText().toString();
-            price.setText((Integer.parseInt(p) + Integer.parseInt(value)) + "");
+            int total = Integer.parseInt(p) + Integer.parseInt(value);
+            setPrice(total);
         }else{
-            String p = price.getText().toString();
-            price.setText((Integer.parseInt(p) - Integer.parseInt(value)) + "");
+            int total = Integer.parseInt(p) - Integer.parseInt(value);
+            setPrice(total);
         }
 
     }

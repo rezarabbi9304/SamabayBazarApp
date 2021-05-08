@@ -1,6 +1,7 @@
 package com.example.samabaybazar.db;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -21,6 +22,9 @@ public interface ProductDao {
 
     @Update
     int updateProduct(ProductListModel animModels);
+
+    @Delete
+    int deleteProduct(ProductListModel animModels);
 
     @Query("SELECT * FROM ProductListModel WHERE id LIKE:pid")
     ProductListModel getAnim(int pid);

@@ -2,11 +2,13 @@ package com.example.samabaybazar;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +20,8 @@ import com.bumptech.glide.Glide;
 import com.example.samabaybazar.db.AppDataBase;
 import com.google.gson.Gson;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +31,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     private List<ProductListModel> productListModelList;
     AppDataBase db;
     Boolean isUpdate = false;
+    OnItemClick listener;
 
     private List<ProductListModel> cartList;
 
     public ProductAdapter(Context mContext) {
         this.mContext = mContext;
+        this.listener = listener;
         cartList = new ArrayList<>();
          db = AppDataBase.getINSTANCE(mContext);
     }
@@ -44,7 +50,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.product_list_layout,null);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.sample_product_layout,null);
         MyViewHolder holder = new MyViewHolder(view);
 
 
@@ -53,16 +59,49 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.productName.setText(productListModelList.get(position).getName());
-        holder.price.setText(productListModelList.get(position).getPrice());
-        holder.productDetails.setText(productListModelList.get(position).getDescription());
+
+        holder.setName.setText(productListModelList.get(position).getName());
+        holder.setPrice.setText(productListModelList.get(position).getPrice());
 
         Glide.with(mContext)
                 .load(productListModelList.get(position).getImage())
-                .into(holder.productImage);
+                .into(holder.setImage);
 
-      /*  holder.ratingBar.setRating(productListModelList.get(position));*/
+        if (productListModelList.get(position).productCount > 0){
+            holder.counterView.setVisibility(View.VISIBLE);
+            holder.btnAddToCart.setVisibility(View.GONE);
+        }else{
+            holder.counterView.setVisibility(View.GONE);
+            holder.btnAddToCart.setVisibility(View.VISIBLE);
+        }
+
         holder.btnAddToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.counterView.setVisibility(View.VISIBLE);
+                holder.btnAddToCart.setVisibility(View.GONE);
+
+                ProductListModel product;
+                product = db.productDao().getAnim(productListModelList.get(position).getId());
+                isUpdate = true;
+
+                if (product == null){
+                    product = productListModelList.get(position);
+                    isUpdate = false;
+                }
+                int productCount = product.getProductCount();
+                productCount+=1;
+                product.setProductCount(productCount);
+                holder.setTxtCounter.setText(productCount+"");
+                holder.totalAmount.setText(""+(productCount * Integer.parseInt(productListModelList.get(position).getPrice()) ));
+
+                SaveData(product);
+
+            }
+        });
+
+        //1st logic add to cart , if exist increase count.
+        holder.btnAddTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -77,10 +116,47 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
                 int productCount = product.getProductCount();
                 productCount+=1;
                 product.setProductCount(productCount);
+                holder.setTxtCounter.setText(productCount+"");
+                holder.totalAmount.setText(""+(productCount * Integer.parseInt(productListModelList.get(position).getPrice()) ));
 
                 SaveData(product);
             }
         });
+
+        holder.buttonMinus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProductListModel product;
+                product = db.productDao().getAnim(productListModelList.get(position).getId());
+                isUpdate = true;
+
+                if (product == null){
+                    product = productListModelList.get(position);
+                    isUpdate = false;
+                }
+                int productCount = product.getProductCount();
+
+                if (productCount == 0){
+                    holder.counterView.setVisibility(View.GONE);
+                    holder.btnAddToCart.setVisibility(View.VISIBLE);
+                }else{
+                    productCount-=1;
+                    product.setProductCount(productCount);
+                    holder.setTxtCounter.setText(productCount+"");
+
+                    SaveData(product);
+                }
+                holder.totalAmount.setText(""+(productCount * Integer.parseInt(productListModelList.get(position).getPrice()) ));
+
+            }
+        });
+
+
+
+    }
+
+    private void update(ProductListModel product) {
+        db.productDao().updateProduct(product);
     }
 
 
@@ -106,7 +182,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         private TextView price;
         private TextView productDetails;
         private RatingBar ratingBar;
-        private Button btnAddToCart;
+        private TextView btnAddToCart;
+
+        private TextView setName,setPrice,btnAddTxt,setTxtCounter,buttonMinus,totalAmount;
+        private ImageView setImage;
+        LinearLayout counterView;
+
+
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -117,7 +199,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
             price = itemView.findViewById(R.id.textPrice);
             productDetails = itemView.findViewById(R.id.textViewDetails);
             ratingBar = itemView.findViewById(R.id.ratingBar);
-            btnAddToCart = itemView.findViewById(R.id.buttonCart);
+            btnAddToCart = itemView.findViewById(R.id.addToCart);
+            counterView = itemView.findViewById(R.id.layoutCountButton);
+
+
+
+            setName = itemView.findViewById(R.id.setProductName);
+            setPrice = itemView.findViewById(R.id.setPrice);
+            setImage = itemView.findViewById(R.id.imageView);
+            setTxtCounter = itemView.findViewById(R.id.setCounter);
+
+            btnAddTxt = itemView.findViewById(R.id.btnAdd);
+            buttonMinus = itemView.findViewById(R.id.btnMinus);
+            totalAmount = itemView.findViewById(R.id.totalAmount);
         }
     }
 }

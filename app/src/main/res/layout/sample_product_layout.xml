@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="6dp"
+        app:cardCornerRadius="5dp"
+        >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_weight="1.2"
+                android:id="@+id/imageView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <LinearLayout
+                android:layout_weight="1.5"
+                android:id="@+id/layout1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/imageView"
+                android:gravity="center|start"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/setProductName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="start"
+                    android:text="product name" />
+
+                <TextView
+                    android:id="@+id/setPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="start"
+                    android:text="price:" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="Amount"/>
+
+
+            </LinearLayout>
+
+
+
+           <LinearLayout
+               android:layout_weight="1"
+               android:layout_width="0dp"
+               android:layout_height="match_parent"
+               android:gravity="center"
+               android:orientation="vertical">
+
+               <TextView
+                   android:id="@+id/addToCart"
+                   android:visibility="gone"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:drawableLeft="@drawable/ic_baseline_add_shopping_cart_24"
+                   android:text="ADD TO CART"
+                   android:layout_gravity="center"
+                   android:textSize="11sp"
+                   android:gravity="center" />
+
+               <LinearLayout
+                   android:id="@+id/layoutCountButton"
+                   android:layout_gravity="center"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal">
+
+                   <TextView
+                       android:id="@+id/btnAdd"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:padding="4dp"
+                       android:drawableLeft="@drawable/ic_baseline_add_circle_24" />
+
+                   <TextView
+                       android:id="@+id/setCounter"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="count" />
+
+                   <TextView
+                       android:id="@+id/btnMinus"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:padding="4dp"
+                       android:drawableLeft="@drawable/ic_baseline_remove_circle_24" />
+
+
+               </LinearLayout>
+
+               <TextView
+                   android:id="@+id/totalAmount"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="40dp"
+                   android:gravity="center"
+                   android:text="0.0 tk"/>
+
+
+           </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

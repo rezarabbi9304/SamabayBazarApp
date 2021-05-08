@@ -7,14 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.internal.$Gson$Preconditions;
 
-import org.w3c.dom.Text;
-
+import com.example.samabaybazar.db.AppDataBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,24 +27,24 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnItemClick  {
 
     private RecyclerView recyclerView;
-    private TextView textView;
-
     private ProductApi productApi;
-
     private List<ProductListModel> productListModelList;
-
     private ProductAdapter adapter;
+    private TextView totalAmount;
+    AppDataBase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        db = AppDataBase.getINSTANCE(this);
 
-        recyclerView = findViewById(R.id.recyclerView);
-        textView = findViewById(R.id.textView);
+        recyclerView = findViewById(R.id.recView);
+
+        totalAmount = findViewById(R.id.setTotalAmount);
 
         productListModelList = new ArrayList<>();
 
@@ -64,20 +64,41 @@ public class MainActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        productApi = retrofit.create(ProductApi.class);
+             productApi = retrofit.create(ProductApi.class);
 
         getProduct();
 
 
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, CartActivity.class);
-                startActivity(intent);
-            }
-        });
+
+
+   /*     AppDataBase db = AppDataBase.getINSTANCE(this);
+        List<ProductListModel> cartProducts = db.productDao().getAllAnim();
+
+
+        int totalPrice = 0;
+        for (ProductListModel product : cartProducts){
+            totalPrice = totalPrice + (Integer.parseInt(product.getPrice()) * product.getProductCount());
+        }
+        setPrice(totalPrice);*/
 
        }
+
+    @Override
+    public void onClick(String value, Boolean add) {
+        String p = totalAmount.getText().toString();
+        if (add){
+            int total = Integer.parseInt(p) + Integer.parseInt(value);
+            setPrice(total);
+        }else{
+            int total = Integer.parseInt(p) - Integer.parseInt(value);
+            setPrice(total);
+        }
+
+    }
+
+    private void setPrice(int totalPrice) {
+        totalAmount.setText(totalPrice);
+    }
 
     private void getProduct() {
 
@@ -91,6 +112,14 @@ public class MainActivity extends AppCompatActivity {
                 {
                     productListModelList = response.body().getProducts();
                     PutDataIntoAdapter(productListModelList);
+
+                  /*  productListModelList = response.body().getProducts();
+                    AppDataBase db = AppDataBase.getINSTANCE(MainActivity.this);
+                    for (ProductListModel model : productListModelList){
+                        db.productDao().insetAnim(model);
+                    }
+                    List<ProductListModel> cartProducts = db.productDao().getAllAnim();
+                    PutDataIntoAdapter(cartProducts);*/
                 }
 
             }
@@ -100,6 +129,36 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "onFailure" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        List<ProductListModel> cartProducts = db.productDao().getAllAnim();
+
+        int totalPrice = 0;
+        for (ProductListModel product : cartProducts){
+            totalPrice = totalPrice + (Integer.parseInt(product.getPrice()) * product.getProductCount());
+        }
+        totalAmount.setText(""+totalPrice);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+        case R.id.cart:
+            Intent intent = new Intent(MainActivity.this, CartActivity.class);
+            startActivity(intent);
+            return(true);
+    }
+        return(super.onOptionsItemSelected(item));
     }
 
     private void PutDataIntoAdapter(List<ProductListModel> productListModelList) {
